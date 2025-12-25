@@ -57,9 +57,9 @@ const explainMedicalReportPrompt = ai.definePrompt({
   **Required Output Structure:**
 
   **1. Simple Explanation:**
-  Create a bulleted list explaining the key findings. For each point, state the marker, its value, a simple interpretation, and a related tip if applicable.
+  Create a numbered list explaining the key findings. For each point, state the marker, its value, a simple interpretation, and a related tip if applicable.
   *Example:*
-  - Hemoglobin: 9.8 g/dL (slightly low) → This is a protein that carries oxygen in your blood. A lower level might make you feel tired. Including iron-rich foods like spinach and lentils can be helpful.
+  1. Hemoglobin: 9.8 g/dL (slightly low) → This is a protein that carries oxygen in your blood. A lower level might make you feel tired. Including iron-rich foods like spinach and lentils can be helpful.
 
   **2. Doctor Summary:**
   Write a concise summary for the user to share with their doctor. Highlight the key findings and values that warrant discussion.
