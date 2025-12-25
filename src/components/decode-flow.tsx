@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { getExplanation, type FormState } from '@/app/decode/actions';
@@ -14,7 +14,7 @@ const initialState: FormState = {
 };
 
 export default function DecodeFlow() {
-  const [state, formAction] = useFormState(getExplanation, initialState);
+  const [state, formAction] = useActionState(getExplanation, initialState);
   const { toast } = useToast();
   const [isNewReport, setIsNewReport] = useState(true);
 
@@ -33,7 +33,7 @@ export default function DecodeFlow() {
 
   const handleReset = () => {
     setIsNewReport(true);
-    // Note: useFormState doesn't have a built-in reset, this approach effectively restarts the flow.
+    // Note: useActionState doesn't have a built-in reset, this approach effectively restarts the flow.
   };
 
   if (!isNewReport && state.data) {
