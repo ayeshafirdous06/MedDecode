@@ -30,6 +30,7 @@ export default function DecodeForm({ formAction }: DecodeFormProps) {
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -64,24 +65,23 @@ export default function DecodeForm({ formAction }: DecodeFormProps) {
         reader.readAsDataURL(file);
     }
   };
-
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    if (imageDataUri) {
-        formData.set('imageDataUri', imageDataUri);
+  
+  const handleTabChange = (value: 'text' | 'upload') => {
+    setActiveTab(value);
+    if (formRef.current) {
+        const formData = new FormData(formRef.current);
+        const reportTextField = formData.get('reportText');
+        if (value === 'upload' && reportTextField) {
+            // clear text area when switching to upload
+            const textArea = formRef.current.querySelector<HTMLTextAreaElement>('textarea[name="reportText"]');
+            if(textArea) textArea.value = '';
+        }
     }
-    if (activeTab === 'upload') {
-        formData.delete('reportText');
-    }
-    formAction(formData);
-  };
+  }
 
 
   return (
-    <form ref={formRef} action={formAction} onSubmit={handleSubmit}>
+    <form ref={formRef} action={formAction}>
        <input type="hidden" name="imageDataUri" value={imageDataUri || ''} />
       <Card className="w-full shadow-lg">
         <CardHeader>
@@ -95,7 +95,7 @@ export default function DecodeForm({ formAction }: DecodeFormProps) {
         </CardHeader>
         <CardContent className="space-y-8">
 
-          <RadioGroup defaultValue="text" onValueChange={(value: 'text' | 'upload') => setActiveTab(value)} className="flex border-b">
+          <RadioGroup defaultValue="text" onValueChange={handleTabChange} className="flex border-b">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="text" id="type-text" className="sr-only" />
                 <Label htmlFor="type-text" className={cn("cursor-pointer py-2 px-4 font-medium", activeTab === 'text' && "border-b-2 border-primary text-primary")}>
@@ -144,10 +144,12 @@ export default function DecodeForm({ formAction }: DecodeFormProps) {
                         <input
                             ref={fileInputRef}
                             type="file"
+                            name="imageFile"
                             className="hidden"
                             accept="image/*"
                             onChange={handleFileChange}
                         />
+                         <input type="hidden" name="reportText" value="" />
                     </div>
                 )}
              </div>
